@@ -10,11 +10,11 @@ app.use(express.json());
 app.use(cors());
 
 MongoClient.connect("mongodb+srv://AnastasiaSaiz:AnastasiaSaiz@cluster0.qkb37.mongodb.net/newJob?retryWrites=true&w=majority", function (error, client) {
-    if (error !== null) {
-        console.log(error);
-    } else {
-        db = client.db("newJob");
-    }
+  if (error !== null) {
+    console.log(error);
+  } else {
+    db = client.db("newJob");
+  }
 });
 
 app.use(
@@ -73,35 +73,35 @@ app.get("/api/fail", function (req, res) {
   res.status(401).send({ mensaje: "denegado" });
 });
 app.get("/api", function (req, res) {
+  const user = {
+    nombre: req.user.nombre,
+    tipo: req.user.tipo
+  }
   if (req.isAuthenticated() === false) {
     return res.status(401).send({ mensaje: "necesitas loguearte" });
   }
-  res.send({ mensaje: "logueado correctamente" });
-});
-app.get("/api/user", function (req, res) {
-  if (req.isAuthenticated()) {
-    return res.send({ nombre: req.user.name });
-  }
-  res.send({ nombre: "No logueado" });
+  res.send({ mensaje: "logueado correctamente", usuario: user });
 });
 
-app.post("/registro", function (req,res){
-     const candidato=req.body
-     db.collection("users").insertOne(candidato, function(error,datos){
-         if(error!==null){
-             res.send(error);
-         }else{
-             res.send(datos);
-         }
-     })
+
+app.post("/registro", function (req, res) {
+  const candidato = req.body
+  db.collection("users").insertOne(candidato, function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else {
+      res.send(datos);
+    }
+  })
 })
 
+
 app.get("/Candidatos", function (req, res) {
-    db.collection("users").find().toArray(function (error, datos) {
-        if (error !== null) {
-            res.send(error);
-        } else res.send(datos);
-    })
+  db.collection("users").find().toArray(function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else res.send(datos);
+  })
 });
 
 

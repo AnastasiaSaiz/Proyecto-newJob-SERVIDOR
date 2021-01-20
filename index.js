@@ -75,7 +75,8 @@ app.get("/api/fail", function (req, res) {
 app.get("/api", function (req, res) {
   const user = {
     nombre: req.user.nombre,
-    tipo: req.user.tipo
+    tipo: req.user.tipo,
+    email: req.user.email,
   }
   if (req.isAuthenticated() === false) {
     return res.status(401).send({ mensaje: "necesitas loguearte" });
@@ -90,14 +91,66 @@ app.post("/registro", function (req, res) {
     if (error !== null) {
       res.send(error);
     } else {
-      res.send(datos);
+      res.send({ registrado: true });
     }
   })
 })
 
+app.put("/editarcandidato", function (req, res) {
+  console.log(req.body);
+  const email = req.body.email;
+  const candidato = {
+    lugar: req.body.lugar,
+    rol: req.body.rol,
+    experiencia: req.body.experiencia,
+    habilidades: req.body.habilidades,
 
-app.get("/Candidatos", function (req, res) {
-  db.collection("users").find().toArray(function (error, datos) {
+  };
+
+  db.collection("users").updateOne({ email: email }, { $set: candidato }, function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else {
+      res.send(datos);
+    }
+  })
+});
+
+app.put("/editarempresa", function (req, res) {
+  console.log(req.body);
+  const email = req.body.email;
+  const empresa = {
+    nombre: req.body.nombre,
+    dsocial: req.body.dsocial,
+    tamanyo: req.body.tamanyo,
+    actividad: req.body.actividad,
+    direccion: req.body.direccion,
+    poblacion: req.body.poblacion,
+    pais: req.body.pais,
+    provincia: req.body.provincia,
+    cp:req.body.cp,
+    telefono: req.body.telefono,
+    web: req.body.web,
+    twitter: req.body.twitter,
+    descripcion: req.body.descripcion,
+    persona: req.body.persona,
+    password: req.body.password
+    
+  };
+
+  db.collection("users").updateOne({ email: email }, { $set: empresa }, function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else {
+      res.send(datos);
+    }
+  })
+});
+
+
+app.get("/Candidatos/:email", function (req, res) {
+  const email= req.params.email
+  db.collection("users").find({email: email}).toArray(function (error, datos) {
     if (error !== null) {
       res.send(error);
     } else res.send(datos);

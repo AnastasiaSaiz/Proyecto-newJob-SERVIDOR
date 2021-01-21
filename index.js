@@ -77,6 +77,25 @@ app.get("/api", function (req, res) {
     nombre: req.user.nombre,
     tipo: req.user.tipo,
     email: req.user.email,
+    lugar: req.user.lugar,
+    rol: req.user.rol,
+    experiencia: req.user.experiencia,
+    habilidades: req.user.habilidades,
+    dsocial: req.user.dsocial,
+    tamanyo: req.user.tamanyo,
+    actividad: req.user.actividad,
+    direccion: req.user.direccion,
+    poblacion: req.user.poblacion,
+    pais: req.user.pais,
+    provincia: req.user.provincia,
+    cp: req.user.cp,
+    telefono: req.user.telefono,
+    web: req.user.web,
+    twitter: req.user.twitter,
+    descripcion: req.user.descripcion,
+    persona: req.user.persona,
+    password: req.user.password
+
   }
   if (req.isAuthenticated() === false) {
     return res.status(401).send({ mensaje: "necesitas loguearte" });
@@ -128,14 +147,14 @@ app.put("/editarempresa", function (req, res) {
     poblacion: req.body.poblacion,
     pais: req.body.pais,
     provincia: req.body.provincia,
-    cp:req.body.cp,
+    cp: req.body.cp,
     telefono: req.body.telefono,
     web: req.body.web,
     twitter: req.body.twitter,
     descripcion: req.body.descripcion,
     persona: req.body.persona,
     password: req.body.password
-    
+
   };
 
   db.collection("users").updateOne({ email: email }, { $set: empresa }, function (error, datos) {
@@ -149,14 +168,24 @@ app.put("/editarempresa", function (req, res) {
 
 
 app.get("/Candidatos/:email", function (req, res) {
-  const email= req.params.email
-  db.collection("users").find({email: email}).toArray(function (error, datos) {
+  const email = req.params.email
+  db.collection("users").find({ email: email }).toArray(function (error, datos) {
     if (error !== null) {
       res.send(error);
     } else res.send(datos);
   })
 });
 
+app.post("/nuevaOferta", function (req, res) {
+  const oferta = req.body
+  db.collection("ofertas").insertOne(oferta, function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else {
+      res.send(datos);
+    }
+  })
+})
 
 
 

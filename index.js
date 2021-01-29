@@ -1,5 +1,6 @@
 const passport = require("passport");
 const session = require("express-session");
+const ObjectID = require("mongodb").ObjectID;
 
 const express = require("express");
 const MongoClient = require("mongodb").MongoClient;
@@ -9,6 +10,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
+let db;
 MongoClient.connect("mongodb+srv://AnastasiaSaiz:AnastasiaSaiz@cluster0.qkb37.mongodb.net/newJob?retryWrites=true&w=majority", function (error, client) {
   if (error !== null) {
     console.log(error);
@@ -74,6 +76,7 @@ app.get("/api/fail", function (req, res) {
 });
 app.get("/api", function (req, res) {
   const user = {
+    _id: req.user._id,
     nombre: req.user.nombre,
     tipo: req.user.tipo,
     email: req.user.email,
@@ -187,6 +190,51 @@ app.post("/nuevaOferta", function (req, res) {
   })
 })
 
+app.get("/ofertas", function (req, res) {
+  const email = req.params.email
+  db.collection("ofertas").find({ email: email }).toArray(function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else res.send(datos);
+  })
+});
+
+app.get("/trabajo/users/:nombreUsuario", function (req, res) {
+  const nombreUsuario= req.params.nombreUsuario  
+    db.collection("ofertas").find({ empresa: nombreUsuario }).toArray(function (error, datos) {
+      if (error !== null) {
+        res.send(error);
+      } else {
+        res.send(datos);
+      }
+    })
+  });
+
+app.get("/ofertas/:id", function (req, res) {
+  const ID = ObjectID(req.params.id)
+  db.collection("ofertas").find({ _id: ID }).toArray(function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else {
+      res.send(datos);
+    }
+  })
+});
+
+app.put("/ofertas/match/:id", function (req, res) {
+  console.log(req.body);
+  const ID = ObjectID(req.params.id)
+  console.log(req.params)
+  const candidato = req.body.idUsuario
+   
+    db.collection("ofertas").updateOne({ _id: ID }, { $push: {candidato: candidato}}, function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else {
+      res.send(datos);
+    }
+  })
+});
 
 
 

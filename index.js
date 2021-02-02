@@ -211,8 +211,21 @@ app.get("/trabajo/users/:nombreUsuario", function (req, res) {
   });
 
 app.get("/ofertas/:id", function (req, res) {
+  console.log(req.params)
   const ID = ObjectID(req.params.id)
   db.collection("ofertas").find({ _id: ID }).toArray(function (error, datos) {
+    if (error !== null) {
+      res.send(error);
+    } else {
+      res.send(datos);
+    }
+  })
+});
+
+app.get("/ofertas/arrayusuarios/:id", function (req, res) {
+  console.log(req.params)
+  const ID = ObjectID(req.params.id)
+  db.collection("users").find({ _id: ID }).toArray(function (error, datos) {
     if (error !== null) {
       res.send(error);
     } else {
